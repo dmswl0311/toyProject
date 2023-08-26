@@ -32,8 +32,6 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2")
-	// https://mvnrepository.com/artifact/com.github.ulisesbocchio/jasypt-spring-boot-starter
-	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 }
 
 tasks.withType<Test> {
