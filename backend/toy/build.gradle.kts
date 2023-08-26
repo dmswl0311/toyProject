@@ -32,6 +32,13 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2")
+	implementation ("io.jsonwebtoken:jjwt:0.9.1")
+	// com.sun.xml.bind
+	implementation ("com.sun.xml.bind:jaxb-impl:4.0.1")
+	implementation ("com.sun.xml.bind:jaxb-core:4.0.1")
+	// javax.xml.bind
+	implementation ("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
+
 }
 
 tasks.withType<Test> {

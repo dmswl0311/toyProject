@@ -19,4 +19,9 @@ public class TestController {
         return testService.getTestPwd();
     }
 
+    @GetMapping("/token")
+    public String makeJwtToken() {
+        return testService.getToken();
+    }
+
 }
