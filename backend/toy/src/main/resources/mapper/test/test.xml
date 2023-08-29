@@ -6,4 +6,16 @@
         SELECT *
         FROM TEST
     </select>
+
+    <insert id="saveAccount" parameterType="com.cej.toy.test.domain.dto.User">
+        INSERT INTO
+        TEST (ID,PASSWORD,ROLE)
+        VALUES (#{id},#{password}, 'ROLE_USER')
+    </insert>
+
+    <select id="findById" parameterType="String" resultType="com.cej.toy.test.domain.dto.User">
+        SELECT * FROM
+        TEST
+        WHERE ID = #{id}
+    </select>
 </mapper>
