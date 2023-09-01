@@ -1,6 +1,7 @@
 package com.cej.toy.test.service;
 
 import com.cej.toy.test.domain.dto.TestDto;
+import com.cej.toy.test.domain.dto.User;
 import com.cej.toy.test.repository.TestRepository;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
@@ -8,6 +9,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class TestService {
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TestRepository testRepository;
     @Value("${jwt.secret}") String secret;
 
@@ -26,7 +29,7 @@ public class TestService {
         if (testDtoList != null && !testDtoList.isEmpty()) {
             return testDtoList
                     .stream()
-                    .map(TestDto::getPwd)
+                    .map(TestDto::getPassword)
                     .toList();
         }
         return null;
@@ -53,4 +56,20 @@ public class TestService {
                 .compact();
     }
 
+    /**
+     * 계정 생성
+     * @param testDto
+     * @return
+     */
+    public Long saveAccount(TestDto testDto) {
+        if (testDto != null) {
+            return testRepository.saveAccount(User.builder()
+                    .id(testDto.getId())
+                    .password(bCryptPasswordEncoder.encode(testDto.getPassword()))
+                    .build());
+        } else {
+            return null;
+        }
+
+    }
 }
