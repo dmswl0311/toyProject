@@ -10,7 +10,7 @@
     <insert id="saveAccount" parameterType="com.cej.toy.test.domain.dto.User">
         INSERT INTO
         TEST (ID,PASSWORD,ROLE)
-        VALUES (#{id},#{password}, 'ROLE_USER')
+        VALUES (#{id},#{password}, #{role})
     </insert>
 
     <select id="findById" parameterType="String" resultType="com.cej.toy.test.domain.dto.User">

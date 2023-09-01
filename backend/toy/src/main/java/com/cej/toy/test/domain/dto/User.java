@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @Builder
 public class User implements UserDetails {
-    private String num;
+    private int num;
     private String id;
     private String password;
     private String role;

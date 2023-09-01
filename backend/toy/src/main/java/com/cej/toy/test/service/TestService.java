@@ -1,5 +1,7 @@
 package com.cej.toy.test.service;
 
+import com.cej.toy.test.config.JwtProvider;
+import com.cej.toy.test.domain.dto.LoginResDto;
 import com.cej.toy.test.domain.dto.TestDto;
 import com.cej.toy.test.domain.dto.User;
 import com.cej.toy.test.repository.TestRepository;
@@ -9,6 +11,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,8 @@ public class TestService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TestRepository testRepository;
     @Value("${jwt.secret}") String secret;
+
+    private final JwtProvider jwtProvider;
 
     public List<String> getTestPwd(){
         List<TestDto> testDtoList = testRepository.selectTestDto();
@@ -66,10 +71,32 @@ public class TestService {
             return testRepository.saveAccount(User.builder()
                     .id(testDto.getId())
                     .password(bCryptPasswordEncoder.encode(testDto.getPassword()))
+                    .role(testDto.getRole() == null ? "ROLE_USER" : testDto.getRole())
                     .build());
         } else {
             return null;
         }
+    }
 
+    public LoginResDto login(TestDto testDto) {
+        User user = testRepository.findById(testDto.getId()).orElseThrow(()->new BadCredentialsException("잘못된 계정 정보입니다."));
+
+        if (!bCryptPasswordEncoder.matches(testDto.getPassword(),user.getPassword())) {
+            throw new BadCredentialsException("잘못된 계정정보입니다.");
+        }
+        String token = jwtProvider.createToken(user.getId());
+        String refreshToken = jwtProvider.createRefreshToken(user.getId());
+
+        return LoginResDto.builder()
+                .num(user.getNum())
+                .id(user.getId())
+                .nickname("없음")
+                .role(user.getRole())
+                .token(token)
+                .build();
+    }
+
+    public User getUser(User user) {
+        return user;
     }
 }
