@@ -1,4 +1,4 @@
-package com.cej.toy.test.config;
+package com.cej.toy.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

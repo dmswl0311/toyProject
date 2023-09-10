@@ -1,4 +1,4 @@
-package com.cej.toy.test.config;
+package com.cej.toy.config;
 
 import com.cej.toy.test.service.UserDetailService;
 import io.jsonwebtoken.*;

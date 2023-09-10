@@ -1,34 +1,23 @@
-package com.cej.toy.test.config;
+package com.cej.toy.config;
 
-import com.cej.toy.test.exception.CustomAccessDeniedHandler;
-import com.cej.toy.test.exception.CustomAuthenticationEntryPoint;
-import com.cej.toy.test.filter.JwtAuthenticationFilter;
+import com.cej.toy.exception.CustomAccessDeniedHandler;
+import com.cej.toy.exception.CustomAuthenticationEntryPoint;
+import com.cej.toy.filter.JwtAuthenticationFilter;
 import com.cej.toy.test.service.UserDetailService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-
-import java.io.IOException;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -56,7 +45,7 @@ public class SecurityConfig {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers("/login", "/testApi/login", "/testApi/join").permitAll()
+                                .requestMatchers("/login", "/testApi/login", "/testApi/join", "/open-api/**").permitAll()
                                 .requestMatchers("/testApi/getUser", "/testApi/logout").hasAnyRole("USER","ADMIN")
                                 .requestMatchers("/testApi/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/**").authenticated() // 로그인 한 사용자 접근 가능

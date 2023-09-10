@@ -1,4 +1,4 @@
-package com.cej.toy.test.exception;
+package com.cej.toy.exception;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

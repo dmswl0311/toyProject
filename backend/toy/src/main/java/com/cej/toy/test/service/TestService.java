@@ -1,6 +1,6 @@
 package com.cej.toy.test.service;
 
-import com.cej.toy.test.config.JwtProvider;
+import com.cej.toy.config.JwtProvider;
 import com.cej.toy.test.domain.dto.LoginResDto;
 import com.cej.toy.test.domain.dto.TestDto;
 import com.cej.toy.test.domain.dto.User;
