@@ -9,11 +9,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -40,6 +42,7 @@ public class SecurityConfig {
     }
 
     private final JwtProvider jwtProvider;
+    private final RedisTemplate redisTemplate;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,10 +51,11 @@ public class SecurityConfig {
 
         http
                 .csrf(AbstractHttpConfigurer::disable) //CSRF 공격에 대한 방어 해제
+                .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers("/login", "/testApi/login", "/testApi/join", "/testApi/logout", "/testApi/testPwd").permitAll()
-                                .requestMatchers("/testApi/getUser").hasAnyRole("USER","ADMIN")
+                                .requestMatchers("/login", "/testApi/login", "/testApi/join").permitAll()
+                                .requestMatchers("/testApi/getUser", "/testApi/logout").hasAnyRole("USER","ADMIN")
                                 .requestMatchers("/testApi/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/**").authenticated() // 로그인 한 사용자 접근 가능
                 )
@@ -60,15 +64,15 @@ public class SecurityConfig {
 //                                .usernameParameter("id")
 //                                .passwordParameter("password")
 //                ) // formLogin
-                .logout((logout) ->
-                        logout.deleteCookies("remove")
-                                .invalidateHttpSession(true)
-                                .logoutUrl("/testApi/logout"))
+//                .logout((logout) ->
+//                        logout.deleteCookies("remove")
+//                                .invalidateHttpSession(true)
+//                                .logoutUrl("/testApi/logout"))
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .requestCache((cache) -> cache
                         .requestCache(requestCache)
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider,redisTemplate), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((exceptionHandling) ->
                         exceptionHandling
                                 .accessDeniedHandler(new AccessDeniedHandler() {
@@ -88,7 +92,7 @@ public class SecurityConfig {
                                         // 인증문제가 발생했을 때 이 부분을 호출한다.
                                         response.setStatus(401);
                                         response.setContentType("text/html; charset=UTF-8");
-                                        response.getWriter().write("인증되지 않은 사용자입니다.");
+                                        response.getWriter().write("로그인이 필요합니다!");
                                         log.error("Forbidden!!! message : "+ authException.getMessage());
                                     }
                                 })

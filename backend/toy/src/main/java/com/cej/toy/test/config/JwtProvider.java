@@ -34,7 +34,7 @@ public class JwtProvider {
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + MIN_EXP))
+                .setExpiration(new Date(now.getTime() + EXP))
                 .claim("id",id)
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
@@ -56,6 +56,11 @@ public class JwtProvider {
             return !parseClaimsJws.getBody().getExpiration().before(new Date());
         }
         return Boolean.FALSE;
+    }
+
+    public long getExpiration(String credentials) {
+        Jws <Claims> parseClaimsJws = Jwts.parser().setSigningKey(secret).parseClaimsJws(credentials);
+        return parseClaimsJws.getBody().getExpiration().getTime();
     }
 
     /**
