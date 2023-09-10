@@ -56,14 +56,9 @@ public class TestController {
      * @param
      */
     @PostMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response){
+    public void logout(){
         log.info("logout");
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-        }
-        return "success";
+        testService.logout();
     }
 
     @GetMapping("/info")

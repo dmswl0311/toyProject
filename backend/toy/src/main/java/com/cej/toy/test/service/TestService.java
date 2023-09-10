@@ -8,16 +8,20 @@ import com.cej.toy.test.repository.TestRepository;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ import java.util.List;
 public class TestService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TestRepository testRepository;
+    private final RedisTemplate<String, String> redisTemplate;
     @Value("${jwt.secret}") String secret;
 
     private final JwtProvider jwtProvider;
@@ -82,10 +87,13 @@ public class TestService {
         User user = testRepository.findById(testDto.getId()).orElseThrow(()->new BadCredentialsException("잘못된 계정 정보입니다."));
 
         if (!bCryptPasswordEncoder.matches(testDto.getPassword(),user.getPassword())) {
-            throw new BadCredentialsException("잘못된 계정정보입니다.");
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
         String token = jwtProvider.createToken(user.getId());
         String refreshToken = jwtProvider.createRefreshToken(user.getId());
+
+        // 로그아웃을 위해 redis에 토큰 저장
+        redisTemplate.opsForValue().set("JWT_TOKEN:" + user.getId(), token, jwtProvider.getExpiration(token), TimeUnit.MILLISECONDS);
 
         return LoginResDto.builder()
                 .num(user.getNum())
@@ -98,5 +106,17 @@ public class TestService {
 
     public User getUser(User user) {
         return user;
+    }
+
+    public void logout(){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // 로그아웃이 안되어 있음
+        if (redisTemplate.opsForValue().get("JWT_TOKEN:" + user.getId()) != null) {
+            redisTemplate.delete("JWT_TOKEN:" + user.getId()); //Token 삭제
+            log.info("logout 성공!");
+        } else {
+            log.error("logout 실패!");
+        }
     }
 }
