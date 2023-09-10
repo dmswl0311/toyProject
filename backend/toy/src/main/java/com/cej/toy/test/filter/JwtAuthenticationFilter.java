@@ -46,13 +46,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String key = "JWT_TOKEN:" + jwtProvider.getUserId(token.split(" ")[1]);
             String storedToken = (String) redisTemplate.opsForValue().get(key);
 
-            // 로그아웃 X
+            // 로그아웃 여부 판단
             if(!ObjectUtils.isEmpty(storedToken)) {
+                // 로그아웃 X
                 // 인증된 유저정보 가져오기 (BARER떼고 토큰만 전달)
                 Authentication authentication = jwtProvider.getUserByToken(token.split(" ")[1]);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
-                log.debug("login X");
+                log.info("login X");
             }
         }
         filterChain.doFilter(request, response);

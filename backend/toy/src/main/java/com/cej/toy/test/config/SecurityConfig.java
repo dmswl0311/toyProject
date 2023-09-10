@@ -1,5 +1,7 @@
 package com.cej.toy.test.config;
 
+import com.cej.toy.test.exception.CustomAccessDeniedHandler;
+import com.cej.toy.test.exception.CustomAuthenticationEntryPoint;
 import com.cej.toy.test.filter.JwtAuthenticationFilter;
 import com.cej.toy.test.service.UserDetailService;
 import jakarta.servlet.ServletException;
@@ -75,27 +77,8 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider,redisTemplate), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((exceptionHandling) ->
                         exceptionHandling
-                                .accessDeniedHandler(new AccessDeniedHandler() {
-                                    @Override
-                                    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-                                        // 권한 문제가 발생했을 때 이 부분을 호출한다.
-
-                                        response.setStatus(403);
-                                        response.setContentType("text/html; charset=UTF-8");
-                                        response.getWriter().write("권한이 없는 사용자입니다.");
-                                        log.error("Forbidden!!! message : "+ accessDeniedException.getMessage());
-                                    }
-                                })
-                                .authenticationEntryPoint(new AuthenticationEntryPoint() {
-                                    @Override
-                                    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-                                        // 인증문제가 발생했을 때 이 부분을 호출한다.
-                                        response.setStatus(401);
-                                        response.setContentType("text/html; charset=UTF-8");
-                                        response.getWriter().write("로그인이 필요합니다!");
-                                        log.error("Forbidden!!! message : "+ authException.getMessage());
-                                    }
-                                })
+                                .accessDeniedHandler(new CustomAccessDeniedHandler())
+                                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 );
 
         return http.build();
