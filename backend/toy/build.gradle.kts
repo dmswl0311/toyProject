@@ -42,6 +42,9 @@ dependencies {
 	implementation ("org.springframework.boot:spring-boot-starter-security")
 	// redis
 	implementation ("org.springframework.boot:spring-boot-starter-data-redis")
+	// openFeign
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.0.4")
+	implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
 
 }
 

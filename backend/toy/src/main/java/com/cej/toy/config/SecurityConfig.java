@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers("/login", "/testApi/login", "/testApi/join", "/open-api/**").permitAll()
+                                .requestMatchers("/login", "/testApi/login", "/testApi/join", "/open-api/**", "/api/**").permitAll()
                                 .requestMatchers("/testApi/getUser", "/testApi/logout").hasAnyRole("USER","ADMIN")
                                 .requestMatchers("/testApi/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/**").authenticated() // 로그인 한 사용자 접근 가능
