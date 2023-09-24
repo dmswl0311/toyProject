@@ -1,7 +1,7 @@
-package com.cej.toy.openApi.api;
+package com.cej.toy.feign.api;
 
-import com.cej.toy.openApi.domain.InquiryInformationResponse;
-import com.cej.toy.openApi.domain.InquiryListNationalQualifcationResponse;
+import com.cej.toy.feign.domain.InquiryInformationResponse;
+import com.cej.toy.feign.domain.InquiryListNationalQualifcationResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
