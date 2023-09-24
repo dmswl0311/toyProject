@@ -1,9 +1,10 @@
-package com.cej.toy.openApi.service;
+package com.cej.toy.feign.service;
 
-import com.cej.toy.openApi.api.OpenApiFeignClient;
-import com.cej.toy.openApi.domain.InquiryInformationResponse;
-import com.cej.toy.openApi.domain.InquiryListNationalQualifcationResponse;
-import com.cej.toy.openApi.domain.ItemDto;
+import com.cej.toy.feign.repository.OpenApiRepository;
+import com.cej.toy.feign.api.OpenApiFeignClient;
+import com.cej.toy.feign.domain.InquiryInformationResponse;
+import com.cej.toy.feign.domain.InquiryListNationalQualifcationResponse;
+import com.cej.toy.feign.domain.ItemDto;
 import feign.codec.DecodeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class OpenApiService {
     private final OpenApiFeignClient openApiFeignClient;
+
+    private final OpenApiRepository openApiRepository;
 
     @Value("${open-api-key}") String ServiceKey;
 
@@ -45,5 +48,23 @@ public class OpenApiService {
         }
 
         return result;
+    }
+
+    public Boolean saveCert(){
+        try {
+            // api 호출
+            ResponseEntity<InquiryListNationalQualifcationResponse> response = openApiFeignClient.getCertMetaInfo(ServiceKey);
+            List<ItemDto> items = Objects.requireNonNull(response.getBody()).getResponse().getBody().getItems().getItem();
+
+            // db 저장
+            int result = openApiRepository.saveCertMetaInfo(items);
+            if (result > 0) {
+                return Boolean.TRUE;
+            }
+            return Boolean.TRUE;
+        } catch (DecodeException e) {
+            e.printStackTrace();
+        }
+        return Boolean.FALSE;
     }
 }

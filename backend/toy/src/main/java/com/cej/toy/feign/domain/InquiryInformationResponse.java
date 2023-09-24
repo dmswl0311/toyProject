@@ -1,4 +1,4 @@
-package com.cej.toy.openApi.domain;
+package com.cej.toy.feign.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -8,13 +8,12 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * 국가자격 종목 목록 정보
+ * 국가자격 종목별 자격정보
  */
-@NoArgsConstructor
 @Getter
 @Setter
-public class InquiryListNationalQualifcationResponse {
-
+@NoArgsConstructor
+public class InquiryInformationResponse {
     private Response response;
 
     @Getter
@@ -37,6 +36,9 @@ public class InquiryListNationalQualifcationResponse {
     @NoArgsConstructor
     public static class Body{
         private Items items;
+        private int numOfRows;
+        private int pageNo;
+        private int totalCount;
     }
 
     @Getter
