@@ -7,9 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class TestDto {
+public class LoginResDto {
     private int num;
-    private String password;
     private String id;
     private String role;
+    private String nickname;
+    private String token;
 }

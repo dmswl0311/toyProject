@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cej.toy.cert.repository.CertRepository">
+
+    <select id="getAllCertList" resultType="com.cej.toy.cert.domain.CertDto">
+        SELECT *
+        FROM CERT_META_INFO
+    </select>
+
+    <select id="getAllCertListPageNo" parameterType="int" resultType="com.cej.toy.cert.domain.CertDto">
+        SELECT *
+        FROM CERT_META_INFO
+        ORDER BY jmcd DESC
+        LIMIT #{startPage}, #{endPage}
+    </select>
+
+    <select id="getTotalPageNo" resultType="int">
+        SELECT count(jmcd)
+        FROM CERT_META_INFO
+    </select>
+
+    <select id="getCertList" parameterType="String" resultType="com.cej.toy.cert.domain.CertDto">
+        SELECT *
+        FROM CERT_META_INFO
+        WHERE seriesnm = #{category}
+    </select>
+
+</mapper>
