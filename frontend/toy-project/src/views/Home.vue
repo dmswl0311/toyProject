@@ -1,18 +1,25 @@
 <template>
     <div>
-        <h1>메인페이지 테스트</h1>
+        <h1>메인화면</h1>
         <p>{{ msg }}</p>
         <button @click="getData()">이벤트 함수 호출</button>
         <p>{{ contents }}</p>
+        <CertList> </CertList>
+        
     </div>
 </template>
 
 <script>
+import CertList from '@/components/CertList.vue';
+
 const HOST = "http://localhost:8082";
 var contents;
 
 export default {
-  name: 'HelloWorld',
+  name: 'MainPage',
+  components: {
+    CertList
+  },
   data () {
     return {
       msg: 'Vue.js 시작하기',
@@ -34,7 +41,7 @@ export default {
         .finally(() => {
             console.log("finally");
         })
-    }
+    },
   }
 }
 
